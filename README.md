@@ -1,1 +1,2 @@
-# Autoclub_automation_api
+# Autoclub_autotest_api
+данный репозитори хранит код API автотестов на python с использованием фреймворка систематизации тестов pytest
