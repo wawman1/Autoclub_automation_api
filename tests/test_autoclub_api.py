@@ -10,8 +10,10 @@ class Test_authorization_registration():
     def test_register_user(self):
         
         sign_up = Autoclub_api.sign_up()
-        sign_up_json = sign_up.json()
         Cheking.check_status_code(sign_up, 200)
-        phone_verify = Autoclub_api.phone_verify(sign_up_json)
+        Cheking.check_json_property(sign_up, ['otp_token', 'code'])
+        phone_verify = Autoclub_api.phone_verify(sign_up.json())
         Cheking.check_status_code(phone_verify, 200)
+        Cheking.check_json_property(phone_verify, ['auth_token', 'user_cards'])
+        # print(list(phone_verify.json()))
 
