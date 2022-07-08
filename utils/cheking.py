@@ -9,7 +9,14 @@ class Cheking():
     
     """Метод для проверки ключей ответа"""
     @staticmethod
-    def check_json_property(respons, expected_value):
+    def check_json_keys(respons, expected_value):
         json_respons = respons.json() 
-        print("проверка ключей ответа успешна")
         assert expected_value == list(json_respons), "не верные ключи ответа, ожидались = " + str(expected_value) + " были получены = " + str(list(json_respons))
+        print("проверка ключей ответа успешна")
+
+    """Метод для проверки значений ответа"""
+    @staticmethod
+    def check_json_value(respons, key_value, expected_value):
+        json_respons = respons.json() 
+        assert json_respons.get(key_value) == expected_value, "не верные значения ответа, ожидались = " + str(expected_value) + " были получены = " + str(json_respons.get(expected_value))
+        print("проверка значений ответа успешна")
