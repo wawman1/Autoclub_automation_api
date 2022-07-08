@@ -1,5 +1,3 @@
-from unittest import result
-from urllib import response
 from utils.api import Autoclub_api
 from utils.cheking import Cheking
 
