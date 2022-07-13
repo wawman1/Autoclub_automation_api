@@ -11,6 +11,8 @@ class Cheking():
     @staticmethod
     def check_json_keys(respons, expected_value):
         json_respons = respons.json() 
+        if list(json_respons) == ['data']:
+            json_respons = json_respons.get('data')
         assert expected_value == list(json_respons), "не верные ключи ответа, ожидались = " + str(expected_value) + " были получены = " + str(list(json_respons))
         print("проверка ключей ответа успешна")
 
@@ -18,5 +20,7 @@ class Cheking():
     @staticmethod
     def check_json_value(respons, key_value, expected_value):
         json_respons = respons.json() 
-        assert json_respons.get(key_value) == expected_value, "не верные значения ответа, ожидались = " + str(expected_value) + " были получены = " + str(json_respons.get(expected_value))
+        if list(json_respons) == ['data']:
+            json_respons = json_respons.get('data')
+        assert expected_value == json_respons.get(key_value), "не верные значения ответа, ожидались = " + str(expected_value) + " были получены = " + str(json_respons.get(key_value))
         print("проверка значений ответа успешна")

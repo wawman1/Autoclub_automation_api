@@ -1,18 +1,13 @@
-import requests
-from unittest import result
 from utils.http_methods import Http_method
 import random
 
 """Методы для тестирования autoclub"""
 
-base_url = "http://autoclub-back.eclipseds.ru/api/v1"
-bearer_token = ""           #тут будет переменная из запросов авторизации
-
 class Autoclub_api():
 
     """Запрос на регистрацию"""
     @staticmethod
-    def sign_up():
+    def sign_up(base_url):
 
         print("Запрос кода на регистрацию")
 
@@ -34,7 +29,7 @@ class Autoclub_api():
         
     """(тел)Подтверждение запроса на регистраци/авторизацию/смену номера"""
     @staticmethod
-    def phone_verify(json_sms):
+    def phone_verify(json_sms, base_url):
 
         print("Запрос на подтверждение кода регистрации")
 
@@ -47,4 +42,16 @@ class Autoclub_api():
         reaspons = result.json()
         phone_verify_status_code = "статус код = " + str(result.status_code)
         print(phone_verify_status_code, reaspons)
+        return result
+
+    @staticmethod
+    def profile(base_url, auth_token):
+        profile_resource = '/user/profile'
+        get_resource_profile_url = base_url + profile_resource
+        print(get_resource_profile_url)
+        result = Http_method.get(get_resource_profile_url, auth_token)
+        result.encoding = "utf-8"
+        reaspons = result.json()
+        get_resource_profile_status_code = "статус код = " + str(result.status_code)
+        print(get_resource_profile_status_code, reaspons)
         return result
