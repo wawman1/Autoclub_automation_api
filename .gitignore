@@ -132,3 +132,4 @@ dmypy.json
 
 # My files
 allure_report/
+config.py
