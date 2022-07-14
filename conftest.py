@@ -1,6 +1,9 @@
 import pytest
 import random
 from utils.http_methods import Http_method
+import mysql.connector
+from mysql.connector import Error
+from config import db_config 
 
 
 def pytest_addoption(parser):
@@ -13,7 +16,7 @@ def pytest_addoption(parser):
 def base_url(request):
     server_name = request.config.getoption('server')
     if server_name == "dev":
-        print("\nstart server dev for test..")
+        print("\n\nstart server dev for test..\n\n")
         base_url = 'http://autoclub-back.eclipseds.ru/api/v1'
         
     # elif server_name == "stage":
@@ -50,3 +53,29 @@ def creat_account(base_url):
     result_phone_verify.encoding = "utf-8"
     auth_token = 'Bearer ' + result_phone_verify.json().get("auth_token")
     return auth_token
+
+@pytest.fixture(scope="session") 
+def db_cursor():
+    def create_connection_mysql_db(db_host, user_name, user_password, db_name = None):
+        connection_db = None
+        try:
+            connection_db = mysql.connector.connect(
+                host = db_host,
+                user = user_name,
+                passwd = user_password,
+                database = db_name
+            )
+            print("Подключение к MySQL успешно выполнено\n\n")
+        except Error as db_connection_error:
+            print("Возникла ошибка: ", db_connection_error)
+        return connection_db
+        
+    conn = create_connection_mysql_db(db_config["mysql"]["host"], 
+                                    db_config["mysql"]["user"], 
+                                    db_config["mysql"]["pass"],
+                                    db_config["mysql"]["database"])
+    cursor = conn.cursor()
+    yield cursor
+    cursor.close()
+    conn.close()  
+    print("\n\nПодключение к MySQL завершено")

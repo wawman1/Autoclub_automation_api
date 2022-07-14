@@ -1,5 +1,6 @@
 from utils.http_methods import Http_method
 import random
+from .request_db import db_call
 
 """Методы для тестирования autoclub"""
 
@@ -20,24 +21,30 @@ class Autoclub_api():
         post_resource_sign_up = "/auth/phone/sign-up"
         post_resource_sign_up_url = base_url + post_resource_sign_up
         print(post_resource_sign_up_url)
+
         result = Http_method.post(post_resource_sign_up_url, json_for_sign_up)
         result.encoding = "utf-8"
         reaspons = result.json()
         sign_up_status_code = "статус код = " + str(result.status_code)
         print(sign_up_status_code, reaspons)
+
+        # otp_token = result.json().get("otp_token")
         return result
         
     """(тел)Подтверждение запроса на регистраци/авторизацию/смену номера"""
     @staticmethod
-    def phone_verify(json_sms, base_url):
+    def phone_verify(otp_token, base_url, db_cursor):
 
         print("Запрос на подтверждение кода регистрации")
 
         post_resource_phone_verify = "/auth/phone/verify"
         post_resource_phone_verify_url = base_url + post_resource_phone_verify
         print(post_resource_phone_verify_url)
-        result = Http_method.post(post_resource_phone_verify_url, json_sms)
-        # auth_token = result.json().get("auth_token")
+
+        code = db_call.get_code(otp_token, db_cursor)
+        json_body_bophone_verify = {"otp_token":otp_token, "code":code}
+
+        result = Http_method.post(post_resource_phone_verify_url, json_body_bophone_verify)
         result.encoding = "utf-8"
         reaspons = result.json()
         phone_verify_status_code = "статус код = " + str(result.status_code)
