@@ -5,13 +5,13 @@ import mysql.connector
 from mysql.connector import Error
 from config import db_config 
 
-
+"""Получение указателя сервера при запуске тестов"""
 def pytest_addoption(parser):
     parser.addoption('--server', action='store', default="dev",
                      help="Выберите сервер на котором нужно запускать тесты\n доступные варианты: dev")
 
 
-
+"""Выдача базовой ссылки по указанному серверу"""
 @pytest.fixture(scope="session")    
 def base_url(request):
     server_name = request.config.getoption('server')
@@ -31,6 +31,7 @@ def base_url(request):
         raise pytest.UsageError("не верное имя сервера, доступные варианты: dev")
     return base_url
 
+"""Регистрация нового пользователя и выдача его токена, один тестовый пользователь на сессию"""
 @pytest.fixture(scope="session")    
 def creat_account(base_url):
     random_number = ''.join([random.choice(list('1234567890')) for x in range(10)])
@@ -54,6 +55,7 @@ def creat_account(base_url):
     auth_token = 'Bearer ' + result_phone_verify.json().get("auth_token")
     return auth_token
 
+"""Выполняет подключение к БД при запуске тестов и закрывает подключение по их завершению"""
 @pytest.fixture(scope="session") 
 def db_cursor():
     def create_connection_mysql_db(db_host, user_name, user_password, db_name = None):

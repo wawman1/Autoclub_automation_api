@@ -51,6 +51,7 @@ class Autoclub_api():
         print(phone_verify_status_code, reaspons)
         return result
 
+    """Получение данных профиля"""
     @staticmethod
     def profile(base_url, auth_token):
         profile_resource = '/user/profile'

@@ -22,10 +22,11 @@ class Test_authorization_registration():
 @allure.epic("Тесты профиля")
 class Test_profile():
 
-    def test_get_profile(self, base_url, creat_account):
-            get_profile = Autoclub_api.profile(base_url, creat_account)
-            Cheking.check_status_code(get_profile, 200)
-            Cheking.check_json_keys(get_profile, ['id', 'phone', 'name', 'email', 'birth_date'])
-            # Cheking.check_json_value(get_profile, 'id', 123)
+    with allure.step("Получение данных профиля"):
+        def test_get_profile(self, base_url, creat_account):
+                get_profile = Autoclub_api.profile(base_url, creat_account)
+                Cheking.check_status_code(get_profile, 200)
+                Cheking.check_json_keys(get_profile, ['id', 'phone', 'name', 'email', 'birth_date'])
+                # Cheking.check_json_value(get_profile, 'id', 123)
         
 

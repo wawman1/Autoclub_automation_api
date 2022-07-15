@@ -5,9 +5,11 @@ from utils.logger import Logger
 """Список HTTP методов"""
 
 class Http_method:
+
+    """Создание словаря headers для передачи их в запросы"""
     def headers(auth_token):
         headers_value = {'Accept': 'application/json'}
-        if auth_token != None:
+        if auth_token != None:                              #если запрос отмечен как авторизованный, то передает в него токен авторизации
             headers_value['Authorization'] = auth_token
         return headers_value
     cookie = ""

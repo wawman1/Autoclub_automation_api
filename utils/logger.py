@@ -2,7 +2,7 @@ import datetime
 import os
 from requests import Response
 
-
+"""Логирование действий тестов"""
 class Logger():
     file_name = f"logs/log_" + str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) + ".log"
 
