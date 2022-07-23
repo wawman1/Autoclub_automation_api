@@ -16,7 +16,7 @@ def pytest_addoption(parser):
 def base_url(request):
     server_name = request.config.getoption('server')
     if server_name == "dev":
-        print("\n\nstart server dev for test..\n\n")
+        print("\n\nСтарт тестирования на сервере dev..\n\n")
         base_url = 'http://autoclub-back.eclipseds.ru/api/v1'
         
     # elif server_name == "stage":
@@ -33,7 +33,8 @@ def base_url(request):
 
 """Регистрация нового пользователя и выдача его токена, один тестовый пользователь на сессию"""
 @pytest.fixture(scope="session")    
-def creat_account(base_url):
+def auth_token(base_url):
+    print("\nПодготовка тестового аккаунта")
     random_number = ''.join([random.choice(list('1234567890')) for x in range(10)])
     json_for_sign_up = {
         "phone": "7" + random_number,
@@ -44,15 +45,14 @@ def creat_account(base_url):
     post_resource_sign_up_url = base_url + post_resource_sign_up
     
     result_sign_up = Http_method.post(post_resource_sign_up_url, json_for_sign_up)
-    result_sign_up.encoding = "utf-8"
     reaspons_sign_up = result_sign_up.json()
 
     post_resource_phone_verify = "/auth/phone/verify"
     post_resource_phone_verify_url = base_url + post_resource_phone_verify
 
     result_phone_verify = Http_method.post(post_resource_phone_verify_url, reaspons_sign_up)
-    result_phone_verify.encoding = "utf-8"
     auth_token = 'Bearer ' + result_phone_verify.json().get("auth_token")
+    print("Подготовка тестового аккаунта завершена")
     return auth_token
 
 """Выполняет подключение к БД при запуске тестов и закрывает подключение по их завершению"""

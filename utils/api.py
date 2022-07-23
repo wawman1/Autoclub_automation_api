@@ -6,7 +6,7 @@ from .request_db import db_call
 
 class Autoclub_api():
 
-    """Запрос на регистрацию"""
+    """Запрос кода на регистрацию"""
     @staticmethod
     def sign_up(base_url):
 
@@ -18,48 +18,112 @@ class Autoclub_api():
             "name": "autotest"
         }
 
-        post_resource_sign_up = "/auth/phone/sign-up"
-        post_resource_sign_up_url = base_url + post_resource_sign_up
-        print(post_resource_sign_up_url)
+        resource_sign_up = "/auth/phone/sign-up"
+        resource_sign_up_url = base_url + resource_sign_up
 
-        result = Http_method.post(post_resource_sign_up_url, json_for_sign_up)
-        result.encoding = "utf-8"
-        reaspons = result.json()
-        sign_up_status_code = "статус код = " + str(result.status_code)
-        print(sign_up_status_code, reaspons)
+        result = Http_method.post(resource_sign_up_url, json_for_sign_up)
 
-        # otp_token = result.json().get("otp_token")
+        return result
+
+    """Запрос кода на авторизацию по номеру"""
+    @staticmethod
+    def sign_in(base_url, phone):
+
+        print("Запрос кода на авторизацию по номеру")
+
+        resource_sign_in = "/auth/phone/sign-in"
+        resource_sign_in_url = base_url + resource_sign_in
+
+        json_for_sign_in = {"phone": phone}
+
+        result = Http_method.post(resource_sign_in_url, json_for_sign_in)
+
+        return result
+
+    """Запрос на повторную отправку кода"""
+    @staticmethod
+    def resend_code(base_url, otp_token):
+
+        print("Запрос на повторную отправку кода")
+
+        resource_resend_code = "/auth/code/resend"
+        resource_resend_code_url = base_url + resource_resend_code
+
+        json_for_resend_code = {"phone": otp_token}
+
+        result = Http_method.post(resource_resend_code_url, json_for_resend_code)
+
+        return result
+
+    """Запрос кода на авторизацию по email"""
+    @staticmethod
+    def email_sign_in(base_url, email):
+
+        print("Запрос кода на авторизацию по email")
+
+        resource_email_sign_in = "/auth/email/sign-in"
+        resource_email_sign_in_url = base_url + resource_email_sign_in
+
+        json_for_email_sign_in = {"email": email}
+
+        result = Http_method.post(resource_email_sign_in_url, json_for_email_sign_in)
+
         return result
         
+    """Запрос на подтверждение кода авторизации по email"""
+    @staticmethod
+    def email_verify(otp_token, base_url, db_cursor):
+
+        print("Запрос на подтверждение кода авторизации по email")
+
+        resource_email_verify = "/auth/email/verify"
+        resource_email_verify_url = base_url + resource_email_verify
+
+        code = db_call.get_code(otp_token, db_cursor)
+        json_body_email_verify = {"otp_token":otp_token, "code":code}
+
+        result = Http_method.post(resource_email_verify_url, json_body_email_verify)
+
+        return result
+
     """(тел)Подтверждение запроса на регистраци/авторизацию/смену номера"""
     @staticmethod
     def phone_verify(otp_token, base_url, db_cursor):
 
-        print("Запрос на подтверждение кода регистрации")
+        print("(тел)Запрос на подтверждение кода регистраци/авторизацию/смену номера")
 
-        post_resource_phone_verify = "/auth/phone/verify"
-        post_resource_phone_verify_url = base_url + post_resource_phone_verify
-        print(post_resource_phone_verify_url)
+        resource_phone_verify = "/auth/phone/verify"
+        resource_phone_verify_url = base_url + resource_phone_verify
 
         code = db_call.get_code(otp_token, db_cursor)
         json_body_bophone_verify = {"otp_token":otp_token, "code":code}
 
-        result = Http_method.post(post_resource_phone_verify_url, json_body_bophone_verify)
-        result.encoding = "utf-8"
-        reaspons = result.json()
-        phone_verify_status_code = "статус код = " + str(result.status_code)
-        print(phone_verify_status_code, reaspons)
+        result = Http_method.post(resource_phone_verify_url, json_body_bophone_verify)
+
         return result
 
-    """Получение данных профиля"""
+    """Запрос выхода из профиля"""
+    @staticmethod
+    def logout(base_url, auth_token):
+
+        print("Запрос выхода из профиля")
+
+        resource_logout = "/auth/logout"
+        resource_logout_url = base_url + resource_logout
+
+        result = Http_method.post(url = resource_logout_url, auth_token = auth_token)
+
+        return result
+
+    """Запрос на получение данных профиля"""
     @staticmethod
     def profile(base_url, auth_token):
+
+        print("Запрос на получение данных профиля")
+
         profile_resource = '/user/profile'
-        get_resource_profile_url = base_url + profile_resource
-        print(get_resource_profile_url)
-        result = Http_method.get(get_resource_profile_url, auth_token)
-        result.encoding = "utf-8"
-        reaspons = result.json()
-        get_resource_profile_status_code = "статус код = " + str(result.status_code)
-        print(get_resource_profile_status_code, reaspons)
+        resource_profile_url = base_url + profile_resource
+
+        result = Http_method.get(resource_profile_url, auth_token)
+
         return result
