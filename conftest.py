@@ -34,7 +34,7 @@ def base_url(request):
 """Регистрация нового пользователя и выдача его токена, один тестовый пользователь на сессию"""
 @pytest.fixture(scope="session")    
 def auth_token(base_url):
-    print("\nПодготовка тестового аккаунта")
+    print("\n\nПодготовка тестового аккаунта")
     random_number = ''.join([random.choice(list('1234567890')) for x in range(10)])
     json_for_sign_up = {
         "phone": "7" + random_number,
@@ -52,7 +52,7 @@ def auth_token(base_url):
 
     result_phone_verify = Http_method.post(post_resource_phone_verify_url, reaspons_sign_up)
     auth_token = 'Bearer ' + result_phone_verify.json().get("auth_token")
-    print("Подготовка тестового аккаунта завершена")
+    print("Подготовка тестового аккаунта завершена\n\n")
     return auth_token
 
 """Выполняет подключение к БД при запуске тестов и закрывает подключение по их завершению"""

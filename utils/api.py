@@ -8,16 +8,19 @@ class Autoclub_api():
     class Authorization_registration_api():
         """Запрос кода на регистрацию"""
         @staticmethod
-        def sign_up(base_url):
+        def sign_up(base_url, number="random_number", name_user="autotest"):
 
-            print("Запрос кода на регистрацию")
+            print("\nЗапрос кода на регистрацию")
+            if number == "random_number":
+                number = "7" + (''.join([random.choice(list('1234567890')) for x in range(10)]))
+            else:
+                number = number
 
-            random_number = ''.join([random.choice(list('1234567890')) for x in range(10)])
             json_for_sign_up = {
-                "phone": "7" + random_number,
-                "name": "autotest"
+                    "phone": number,
+                    "name": name_user
             }
-
+            print(json_for_sign_up)
             resource_sign_up = "/auth/phone/sign-up"
             resource_sign_up_url = base_url + resource_sign_up
 
@@ -29,7 +32,7 @@ class Autoclub_api():
         @staticmethod
         def sign_in(base_url, phone):
 
-            print("Запрос кода на авторизацию по номеру")
+            print("\nЗапрос кода на авторизацию по номеру")
 
             resource_sign_in = "/auth/phone/sign-in"
             resource_sign_in_url = base_url + resource_sign_in
@@ -44,7 +47,7 @@ class Autoclub_api():
         @staticmethod
         def resend_code(base_url, otp_token):
 
-            print("Запрос на повторную отправку кода")
+            print("\nЗапрос на повторную отправку кода")
 
             resource_resend_code = "/auth/code/resend"
             resource_resend_code_url = base_url + resource_resend_code
@@ -59,7 +62,7 @@ class Autoclub_api():
         @staticmethod
         def email_sign_in(base_url, email):
 
-            print("Запрос кода на авторизацию по email")
+            print("\nЗапрос кода на авторизацию по email")
 
             resource_email_sign_in = "/auth/email/sign-in"
             resource_email_sign_in_url = base_url + resource_email_sign_in
@@ -74,7 +77,7 @@ class Autoclub_api():
         @staticmethod
         def email_verify(otp_token, base_url, db_cursor):
 
-            print("Запрос на подтверждение кода авторизации по email")
+            print("\nЗапрос на подтверждение кода авторизации по email")
 
             resource_email_verify = "/auth/email/verify"
             resource_email_verify_url = base_url + resource_email_verify
@@ -90,7 +93,7 @@ class Autoclub_api():
         @staticmethod
         def phone_verify(otp_token, base_url, db_cursor):
 
-            print("(тел)Запрос на подтверждение кода регистраци/авторизацию/смену номера")
+            print("\n(тел)Запрос на подтверждение кода регистраци/авторизацию/смену номера")
 
             resource_phone_verify = "/auth/phone/verify"
             resource_phone_verify_url = base_url + resource_phone_verify
@@ -106,7 +109,7 @@ class Autoclub_api():
         @staticmethod
         def logout(base_url, auth_token):
 
-            print("Запрос выхода из профиля")
+            print("\nЗапрос выхода из профиля")
 
             resource_logout = "/auth/logout"
             resource_logout_url = base_url + resource_logout
@@ -120,7 +123,7 @@ class Autoclub_api():
         @staticmethod
         def profile(base_url, auth_token):
 
-            print("Запрос на получение данных профиля")
+            print("\nЗапрос на получение данных профиля")
 
             profile_resource = '/user/profile'
             resource_profile_url = base_url + profile_resource

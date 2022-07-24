@@ -24,3 +24,9 @@ class Cheking():
             json_respons = json_respons.get('data')
         assert expected_value == json_respons.get(key_value), "не верные значения ответа, ожидались = " + str(expected_value) + " были получены = " + str(json_respons.get(key_value))
         print("проверка значений ответа успешна")
+
+    """Метод для проверки ошибок"""
+    @staticmethod
+    def check_error(respons, key, expected_value):
+        assert expected_value == respons.json().get('errors').get(key), "не верная ошибка по полю " + key + ", ожидались = " + str(expected_value) + " были получены = " + str(respons.get('errors').get(key))
+        print("проверка значений ответа успешна")
