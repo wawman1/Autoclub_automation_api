@@ -56,7 +56,7 @@ def auth_token(base_url):
     return auth_token
 
 """Выполняет подключение к БД при запуске тестов и закрывает подключение по их завершению"""
-@pytest.fixture(scope="session") 
+@pytest.fixture(scope="function") 
 def db_cursor():
     def create_connection_mysql_db(db_host, user_name, user_password, db_name = None):
         connection_db = None
@@ -67,7 +67,7 @@ def db_cursor():
                 passwd = user_password,
                 database = db_name
             )
-            print("Подключение к MySQL успешно выполнено\n\n")
+            print("\nПодключение к MySQL успешно выполнено\n")
         except Error as db_connection_error:
             print("Возникла ошибка: ", db_connection_error)
         return connection_db
@@ -80,4 +80,4 @@ def db_cursor():
     yield cursor
     cursor.close()
     conn.close()  
-    print("\n\nПодключение к MySQL завершено")
+    print("\n\nПодключение к MySQL завершено\n")
