@@ -4,6 +4,7 @@ from utils.http_methods import Http_method
 import mysql.connector
 from mysql.connector import Error
 from config import db_config 
+from utils.request_db import db_call
 
 """Получение указателя сервера при запуске тестов"""
 def pytest_addoption(parser):
@@ -31,13 +32,33 @@ def base_url(request):
         raise pytest.UsageError("не верное имя сервера, доступные варианты: dev")
     return base_url
 
-"""Регистрация нового пользователя и выдача его токена, один тестовый пользователь на сессию"""
+"""Генерация номера для тестового аккаунта"""
+# @pytest.fixture(scope="session")    
+# def phone_user():
+#     def random_phone():
+#         random_phone ="7" + ''.join([random.choice(list('1234567890')) for x in range(10)])
+#         return random_phone
+#     count_user = db_call.check_user_phone(random_phone(), db_cursor())
+
+#     while count_user > 0:
+#         free_phone = random_phone()
+#         count_user = db_call.check_user_phone(free_phone, db_cursor())
+#     phone = free_phone
+
+#     return phone
+"""Генерация номера для тестового аккаунта"""
 @pytest.fixture(scope="session")    
-def auth_token(base_url):
+def phone_user():
+    random_phone ="7" + ''.join([random.choice(list('1234567890')) for x in range(10)])
+    return random_phone
+
+
+"""Регистрация нового пользователя и выдача его токена, один тестовый пользователь на сессию"""
+@pytest.fixture(scope="session", autouse=True)    
+def auth_token(base_url, phone_user):
     print("\n\nПодготовка тестового аккаунта")
-    random_number = ''.join([random.choice(list('1234567890')) for x in range(10)])
     json_for_sign_up = {
-        "phone": "7" + random_number,
+        "phone": phone_user,
         "name": "autotest"
     }
 

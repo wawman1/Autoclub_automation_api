@@ -8,16 +8,16 @@ class Autoclub_api():
     class Authorization_registration_api():
         """Запрос кода на регистрацию"""
         @staticmethod
-        def sign_up(base_url, number="random_number", name_user="autotest"):
+        def sign_up(base_url, phone="random_phone", name_user="autotest"):
 
             print("\nЗапрос кода на регистрацию")
-            if number == "random_number":
-                number = "7" + (''.join([random.choice(list('1234567890')) for x in range(10)]))
+            if phone == "random_phone":
+                phone = "7" + (''.join([random.choice(list('1234567890')) for x in range(10)]))
             else:
-                number = number
+                phone = phone
 
             json_for_sign_up = {
-                    "phone": number,
+                    "phone": phone,
                     "name": name_user
             }
             

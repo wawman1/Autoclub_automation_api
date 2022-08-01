@@ -8,12 +8,12 @@ import pytest
 @allure.feature("Тесты регистрации")
 @pytest.mark.registration
 class Test_registration():
-
+    
     @allure.story("Позитивные тесты регистрации")
     @pytest.mark.positive
     class Test_positive(): 
 
-        @allure.description("регистрация нового аккаунта")
+        @allure.title("регистрация нового аккаунта")
         def test_register_user(self, base_url, db_cursor):
 
             with allure.step("Запрос кода на регистрацию"):
@@ -27,8 +27,13 @@ class Test_registration():
                 Cheking.check_json_keys(phone_verify, ['auth_token', 'user_cards'])
                 Cheking.check_json_value(phone_verify, 'user_cards', False)
 
+            with allure.step("Получение данных профиля"):
+                get_profile = Autoclub_api.Profile_api.profile(base_url, auth_token = 'Bearer ' + phone_verify.json().get("auth_token"))
+                Cheking.check_status_code(get_profile, 200)
+                Cheking.check_json_keys(get_profile, ['id', 'phone', 'name', 'email', 'birth_date'])
+
         @pytest.mark.expectation
-        @allure.description("запрос на повторную отправку кода через 2 минуты и регистрация по полученному коду")
+        @allure.title("запрос на повторную отправку кода через 2 минуты и регистрация по полученному коду")
         def test_register_user_after_resend_otp_token(self, base_url):
 
             with allure.step("Запрос кода на регистрацию"):
@@ -48,11 +53,16 @@ class Test_registration():
                 Cheking.check_status_code(phone_verify, 200)
                 Cheking.check_json_keys(phone_verify, ['auth_token', 'user_cards'])
                 Cheking.check_json_value(phone_verify, 'user_cards', False)
+                
+            with allure.step("Получение данных профиля"):
+                get_profile = Autoclub_api.Profile_api.profile(base_url, auth_token = 'Bearer ' + phone_verify.json().get("auth_token"))
+                Cheking.check_status_code(get_profile, 200)
+                Cheking.check_json_keys(get_profile, ['id', 'phone', 'name', 'email', 'birth_date'])
 
     @allure.story("Негативные тесты регистрации")
     @pytest.mark.negativ
     class Test_negativ():
-        @allure.description("Пользователь не указал имя")
+        @allure.title("Пользователь не указал имя")
         def test_register_invalid_name(self, base_url):
 
             with allure.step("Запрос кода на регистрацию без имени"):
@@ -61,34 +71,34 @@ class Test_registration():
                 Cheking.check_json_keys(sign_up, ['message', 'errors'])
                 Cheking.check_error(sign_up, 'name',['Укажите имя'])
 
-        @allure.description("Пользователь не указал номер телефона")
-        def test_register_no_phone_number(self, base_url):
+        @allure.title("Пользователь не указал номер телефона")
+        def test_register_no_phone_phone(self, base_url):
 
             with allure.step("Запрос кода на регистрацию без номера"):
-                sign_up = Autoclub_api.Authorization_registration_api.sign_up(base_url, number="")
+                sign_up = Autoclub_api.Authorization_registration_api.sign_up(base_url, phone="")
                 Cheking.check_status_code(sign_up, 422)
                 Cheking.check_json_keys(sign_up, ['message', 'errors'])
                 Cheking.check_error(sign_up, 'phone',['Введите номер телефона'])
         
-        @allure.description("Пользователь ввел недостаточное количество символов в поле для ввода номера телефона")
-        def test_register_Invalid_number_format(self, base_url):
+        @allure.title("Пользователь ввел недостаточное количество символов в поле для ввода номера телефона")
+        def test_register_Invalid_phone_format(self, base_url):
 
             with allure.step("Запрос кода на регистрацию с коротким номером"):
-                sign_up = Autoclub_api.Authorization_registration_api.sign_up(base_url, number="123")
+                sign_up = Autoclub_api.Authorization_registration_api.sign_up(base_url, phone="123")
                 Cheking.check_status_code(sign_up, 422)
                 Cheking.check_json_keys(sign_up, ['message', 'errors'])
                 Cheking.check_error(sign_up, 'phone',['Неверный формат номера'])
 
-        @allure.description("Пользователь с указанным номером телефона уже есть в базе данных")
+        @allure.title("Пользователь с указанным номером телефона уже есть в базе данных")
         def test_register_error_used_phone(self, base_url):
 
             with allure.step("Запрос кода на регистрацию с уже существующим номером в базе данных"):
-                sign_up = Autoclub_api.Authorization_registration_api.sign_up(base_url, number="79523211591")
+                sign_up = Autoclub_api.Authorization_registration_api.sign_up(base_url, phone="79523211591")
                 Cheking.check_status_code(sign_up, 422)
                 Cheking.check_json_keys(sign_up, ['message', 'errors'])
                 Cheking.check_error(sign_up, 'phone',['Учетная запись с таким номером уже существует'])
 
-        @allure.description("Пользователь не ввел код подтверждения и нажал «Отправить»")
+        @allure.title("Пользователь не ввел код подтверждения и нажал «Отправить»")
         def test_register_user_no_code(self, base_url):
 
             with allure.step("Запрос кода на регистрацию"):
@@ -102,7 +112,7 @@ class Test_registration():
                 Cheking.check_json_keys(phone_verify, ['message', 'errors'])
                 Cheking.check_error(phone_verify, 'code',['Код введен неверно'])
         
-        @allure.description("Пользователь указал недостаточное количество символов в поле для ввода кода и нажал «Отправить»")
+        @allure.title("Пользователь указал недостаточное количество символов в поле для ввода кода и нажал «Отправить»")
         def test_register_user_short_code(self, base_url):
 
             with allure.step("Запрос кода на регистрацию"):
@@ -116,7 +126,7 @@ class Test_registration():
                 Cheking.check_json_keys(phone_verify, ['message', 'errors'])
                 Cheking.check_error(phone_verify, 'code',['Код введен неверно'])
                 
-        @allure.description("Пользователь указал неверный код и нажал «Отправить»")
+        @allure.title("Пользователь указал неверный код и нажал «Отправить»")
         def test_register_user_invalid_code(self, base_url):
 
             with allure.step("Запрос кода на регистрацию"):
@@ -130,7 +140,7 @@ class Test_registration():
                 Cheking.check_json_keys(phone_verify, ['message', 'errors'])
                 Cheking.check_error(phone_verify, 'code',['Код введен неверно'])
         
-        @allure.description("Пользователь указал неверный otp_token")
+        @allure.title("Пользователь указал неверный otp_token")
         def test_register_user_invalid_otp_token(self, base_url):
 
             with allure.step("Запрос на подтверждение кода регистрации, с не верным otp_token"):
@@ -140,7 +150,7 @@ class Test_registration():
                 Cheking.check_error(phone_verify, 'otp_token',['Указан недействительный временный пароль'])
         
         @pytest.mark.expectation
-        @allure.description("Пользователь указал просроченный otp_token")
+        @allure.title("Пользователь указал просроченный otp_token")
         def test_register_user_old_otp_token(self, base_url, db_cursor):
 
             with allure.step("Запрос кода на регистрацию"):
@@ -157,7 +167,7 @@ class Test_registration():
                 Cheking.check_json_keys(phone_verify, ['message', 'errors'])
                 Cheking.check_error(phone_verify, 'code',['Код просрочен'])
         
-        @allure.description("запрос на повторную отправку кода до истечения 2 минут")
+        @allure.title("запрос на повторную отправку кода до истечения 2 минут")
         def test_register_user_resend_new_otp_token(self, base_url):
 
             with allure.step("Запрос кода на регистрацию"):
@@ -171,7 +181,7 @@ class Test_registration():
                 Cheking.check_json_keys(resend_code, ['message', 'errors'])
                 Cheking.check_error(resend_code, 'otp_token',['Отправка кода возможна не чаще раза в 2 минуты'])
     
-        @allure.description("запрос на повторную отправку кода по невалидному otp_token")
+        @allure.title("запрос на повторную отправку кода по невалидному otp_token")
         def test_invalid_resend_otp_token(self, base_url):
 
             with allure.step("Запрос кода по не существующему otp_token"):
