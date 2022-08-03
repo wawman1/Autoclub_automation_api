@@ -6,6 +6,21 @@ from mysql.connector import Error
 from config import db_config 
 from utils.request_db import db_call
 
+"""Создание подключения к БД"""
+def create_connection_mysql_db(db_host, user_name, user_password, db_name = None):
+        connection_db = None
+        try:
+            connection_db = mysql.connector.connect(
+                host = db_host,
+                user = user_name,
+                passwd = user_password,
+                database = db_name
+            )
+            print("\nПодключение к MySQL успешно выполнено\n")
+        except Error as db_connection_error:
+            print("Возникла ошибка: ", db_connection_error)
+        return connection_db
+
 """Получение указателя сервера при запуске тестов"""
 def pytest_addoption(parser):
     parser.addoption('--server', action='store', default="dev",
@@ -32,25 +47,30 @@ def base_url(request):
         raise pytest.UsageError("не верное имя сервера, доступные варианты: dev")
     return base_url
 
-"""Генерация номера для тестового аккаунта"""
-# @pytest.fixture(scope="session")    
-# def phone_user():
-#     def random_phone():
-#         random_phone ="7" + ''.join([random.choice(list('1234567890')) for x in range(10)])
-#         return random_phone
-#     count_user = db_call.check_user_phone(random_phone(), db_cursor())
-
-#     while count_user > 0:
-#         free_phone = random_phone()
-#         count_user = db_call.check_user_phone(free_phone, db_cursor())
-#     phone = free_phone
-
-#     return phone
-"""Генерация номера для тестового аккаунта"""
+"""Генерация уникального номера для тестового аккаунта"""
 @pytest.fixture(scope="session")    
 def phone_user():
-    random_phone ="7" + ''.join([random.choice(list('1234567890')) for x in range(10)])
-    return random_phone
+    def random_phone():
+        random_phone ="7" + ''.join([random.choice(list('1234567890')) for x in range(10)])
+        return random_phone
+    
+    conn = create_connection_mysql_db(db_config["mysql"]["host"], 
+                                    db_config["mysql"]["user"], 
+                                    db_config["mysql"]["pass"],
+                                    db_config["mysql"]["database"])
+    cursor = conn.cursor()
+    
+    free_phone = random_phone()
+    count_user = db_call.check_user_phone(free_phone, cursor)
+
+    while count_user >= 1:
+        free_phone = random_phone()
+        count_user = db_call.check_user_phone(free_phone, cursor)
+    cursor.close()
+    conn.close()  
+
+    return free_phone
+
 
 
 """Регистрация нового пользователя и выдача его токена, один тестовый пользователь на сессию"""
@@ -79,20 +99,6 @@ def auth_token(base_url, phone_user):
 """Выполняет подключение к БД при запуске тестов и закрывает подключение по их завершению"""
 @pytest.fixture(scope="function") 
 def db_cursor():
-    def create_connection_mysql_db(db_host, user_name, user_password, db_name = None):
-        connection_db = None
-        try:
-            connection_db = mysql.connector.connect(
-                host = db_host,
-                user = user_name,
-                passwd = user_password,
-                database = db_name
-            )
-            print("\nПодключение к MySQL успешно выполнено\n")
-        except Error as db_connection_error:
-            print("Возникла ошибка: ", db_connection_error)
-        return connection_db
-        
     conn = create_connection_mysql_db(db_config["mysql"]["host"], 
                                     db_config["mysql"]["user"], 
                                     db_config["mysql"]["pass"],
