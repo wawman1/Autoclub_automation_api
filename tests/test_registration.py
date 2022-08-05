@@ -81,7 +81,7 @@ class Test_registration():
                 Cheking.check_error(sign_up, 'phone',['Введите номер телефона'])
         
         @allure.title("Пользователь ввел недостаточное количество символов в поле для ввода номера телефона")
-        def test_register_Invalid_phone_format(self, base_url):
+        def test_register_invalid_phone_format(self, base_url):
 
             with allure.step("Запрос кода на регистрацию с коротким номером"):
                 sign_up = Autoclub_api.Authorization_registration_api.sign_up(base_url, phone="123")

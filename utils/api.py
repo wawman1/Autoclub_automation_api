@@ -1,5 +1,5 @@
 from utils.http_methods import Http_method
-import random
+from conftest import Secondary_functions
 from .request_db import db_call
 
 """Методы для тестирования autoclub"""
@@ -12,9 +12,7 @@ class Autoclub_api():
 
             print("\nЗапрос кода на регистрацию")
             if phone == "random_phone":
-                phone = "7" + (''.join([random.choice(list('1234567890')) for x in range(10)]))
-            else:
-                phone = phone
+                phone = Secondary_functions.random_phone()
 
             json_for_sign_up = {
                     "phone": phone,
