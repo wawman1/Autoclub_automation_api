@@ -72,7 +72,7 @@ class Test_registration():
                 Cheking.check_error(sign_up, 'name',['Укажите имя'])
 
         @allure.title("Пользователь не указал номер телефона")
-        def test_register_no_phone_phone(self, base_url):
+        def test_register_no_phone(self, base_url):
 
             with allure.step("Запрос кода на регистрацию без номера"):
                 sign_up = Autoclub_api.Authorization_registration_api.sign_up(base_url, phone="")
@@ -93,7 +93,7 @@ class Test_registration():
         def test_register_error_used_phone(self, base_url):
 
             with allure.step("Запрос кода на регистрацию с уже существующим номером в базе данных"):
-                sign_up = Autoclub_api.Authorization_registration_api.sign_up(base_url, phone="79523211591")
+                sign_up = Autoclub_api.Authorization_registration_api.sign_up(base_url, phone="79523211591") # нужно исправить не на хардкод
                 Cheking.check_status_code(sign_up, 422)
                 Cheking.check_json_keys(sign_up, ['message', 'errors'])
                 Cheking.check_error(sign_up, 'phone',['Учетная запись с таким номером уже существует'])
