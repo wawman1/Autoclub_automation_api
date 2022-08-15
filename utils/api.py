@@ -73,14 +73,18 @@ class Autoclub_api():
             
         """Запрос на подтверждение кода авторизации по email"""
         @staticmethod
-        def email_verify(otp_token, base_url, db_cursor):
+        def email_verify(base_url, otp_token, db_cursor):
 
             print("\nЗапрос на подтверждение кода авторизации по email")
+
+            if str(type(db_cursor)) == "<class 'mysql.connector.cursor_cext.CMySQLCursor'>": # пока ничего лучше не придумал для реализации негативных кейсов с кодом
+                code = db_call.get_code(otp_token, db_cursor)
+            else:
+                code = db_cursor
 
             resource_email_verify = "/auth/email/verify"
             resource_email_verify_url = base_url + resource_email_verify
 
-            code = db_call.get_code(otp_token, db_cursor)
             json_body_email_verify = {"otp_token":otp_token, "code":code}
 
             result = Http_method.post(resource_email_verify_url, json_body_email_verify)
@@ -101,7 +105,6 @@ class Autoclub_api():
             resource_phone_verify = "/auth/phone/verify"
             resource_phone_verify_url = base_url + resource_phone_verify
 
-            # code = db_call.get_code(otp_token, db_cursor)
             json_body_bophone_verify = {"otp_token":otp_token, "code":code}
 
             result = Http_method.post(resource_phone_verify_url, json_body_bophone_verify)
@@ -132,5 +135,30 @@ class Autoclub_api():
             resource_profile_url = base_url + profile_resource
 
             result = Http_method.get(resource_profile_url, auth_token)
+
+            return result
+        
+        """Запрос изменение данных профиля"""
+        @staticmethod
+        def profile_update(base_url, auth_token, name=None, email=None, birth_date=None):
+
+            print("\nЗапрос изменение данных профиля")
+
+            profile_resource = '/user/profile/update'
+            resource_profile_url = base_url + profile_resource
+
+            json_for_profile_update = {}
+
+            if name!= None:
+                json_for_profile_update["name"] = name
+
+            if email!= None:
+                json_for_profile_update["email"] = email
+
+            if birth_date!= None:
+                json_for_profile_update["birth_date"] = birth_date
+
+
+            result = Http_method.patch(resource_profile_url, body=json_for_profile_update, auth_token=auth_token)
 
             return result
