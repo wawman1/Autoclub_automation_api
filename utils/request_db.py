@@ -25,3 +25,15 @@ class db_call():
             print(error)
         return query_result[0]
     
+    """Считает количество пользователей с указанным email"""
+    def check_user_email(email, db_cursor):
+        try:
+            email_quotes = '\"' + email + '\"'
+            select_count_users = "SELECT count(*) FROM `users` where email = "  + str(email_quotes)
+            db_cursor.execute(select_count_users)
+            query_result = db_cursor.fetchone()
+
+        except Error as error:
+            print(error)
+        return query_result[0]
+    
