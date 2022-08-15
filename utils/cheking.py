@@ -28,5 +28,5 @@ class Cheking():
     """Метод для проверки ошибок"""
     @staticmethod
     def check_error(respons, key, expected_value):
-        assert expected_value == respons.json().get('errors').get(key), "не верная ошибка по полю " + key + ", ожидались = " + str(expected_value) + " были получены = " + str(respons.get('errors').get(key))
+        assert expected_value == respons.json().get('errors').get(key), "не верная ошибка по полю "+ key + ", ожидались = " + str(expected_value) + " были получены = " + str(respons.json().get('errors').get(key))
         print("проверка значений ошибок ответа успешна")
