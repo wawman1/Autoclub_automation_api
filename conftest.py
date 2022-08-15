@@ -116,3 +116,28 @@ class Secondary_functions():
         print("\nПодключение к MySQL завершено\n")
 
         return free_phone
+
+    """Генерация уникального email"""
+    def random_email():
+        def random_email():
+            random_email = str("".join([random.choice(list("1234567890")) for x in range(5)]) + "@ya.ru")
+            return random_email
+        
+        conn = Secondary_functions.create_connection_mysql_db(db_config["mysql"]["host"], 
+                                        db_config["mysql"]["user"], 
+                                        db_config["mysql"]["pass"],
+                                        db_config["mysql"]["database"])
+        cursor = conn.cursor()
+        
+        free_email = random_email()
+        count_user = db_call.check_user_email(free_email, cursor)
+
+        while count_user >= 1:
+            free_email = random_email()
+            count_user = db_call.check_user_email(free_email, cursor)
+        cursor.close()
+        conn.close()  
+        print("Сгенерирован уникальный email")
+        print("\nПодключение к MySQL завершено\n")
+
+        return free_email
